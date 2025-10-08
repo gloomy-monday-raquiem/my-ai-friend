@@ -6,7 +6,7 @@
     <html lang="ko">
     <head>
     <meta charset="UTF-8">
-    <title>나에 대한 정보</title>
+    <title>Assistant Info</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -274,34 +274,34 @@
 <div class="robot robot3"></div>
 <div class="robot robot4"></div>
 <div class="input-container">
-  <button id="back-button" class="back-btn">뒤로</button>
-  <h1 class="title-top">어떤 인공지능 친구를 원해?</h1>
+  <button id="back-button" class="back-btn">Back</button>
+  <h1 class="title-top">What kinds of initial prompt do you want to input?</h1>
   <!--  <h1 class="title-bottom">친구였으면 좋겠어?</h1>-->
   <form>
     <label>
-      <input id="name-input" class="ai-name" type="text" placeholder="인공지능 친구 이름을 지어줘!" required>
+      <input id="name-input" class="ai-name" type="text" placeholder="Name your assistant" required>
     </label>
 
-    <label><b>내 인공지능 친구 성격은?!</b></label><br>
-    <input class="radio" type="radio" id="option1" name="personality" value="friendly">
-    <label for="option1">항상 밝고 긍정적이고 친절해요. 상냥하고 기분 좋은 말투로 대화해요.</label><br>
+    <label><b>Assistant's Persona</b></label><br>
+    <input class="radio" type="radio" id="option1" name="personality" value="default">
+    <label for="option1">Clear, neutral, and versatile.</label><br>
 
-    <input class="radio" type="radio" id="option2" name="personality" value="adventurous">
-    <label for="option2">장난을 많이 치고 농담 하는 것을 좋아해요. 오래된 친구 처럼 편하게 대화해요.</label><br>
+    <input class="radio" type="radio" id="option2" name="personality" value="cynic">
+    <label for="option2">Sarcastic and dry, delivers blunt help with a witty tone.</label><br>
 
-    <input class="radio" type="radio" id="option3" name="personality" value="intelligent">
-    <label for="option3">이야기를 귀 기울여 듣고 나를 이해해요. 부드럽고 친절한 말투로 대화해요.</label><br>
+    <input class="radio" type="radio" id="option3" name="personality" value="listener">
+    <label for="option3">Warm and laid-back, reflects your thoughts back to you with calm clarity.</label><br>
 
-    <input class="radio" type="radio" id="option4" name="personality" value="humorous">
-    <label for="option4">아주 똑똑하고 설명하는 것을 좋아해요. 선생님처럼 많은 것을 알려줄 수 있어요.</label><br>
+    <input class="radio" type="radio" id="option4" name="personality" value="nerd">
+    <label for="option4">Playful and curious, celebrates knowledge and explains concepts clearly.</label><br>
 
-    <input class="radio" type="radio" id="option5" name="personality" value="caring">
-    <label for="option5">말이 없는 편이고 아주 차분해요. 먼저 많은 얘기를 해주세요.</label><br>
-    <textarea id="character-input" placeholder="여기에 성격을 직접 입력할 수도 있어!" required></textarea>
+    <input class="radio" type="radio" id="option5" name="personality" value="robot">
+    <label for="option5">Precise, efficient, and emotionless, giving direct answers without extra words.</label><br>
+    <textarea id="character-input" placeholder="You can type in by yourself" required></textarea>
   </form>
   <div class="buttons-section">
-    <button id="save-button" class="save-button" onclick="">저장</button>
-    <button id="submit-button" class="submit-button">다음</button>
+    <button id="save-button" class="save-button" onclick="">Save</button>
+    <button id="submit-button" class="submit-button">Next</button>
   </div>
 </div>
 
@@ -341,7 +341,7 @@
                 hideLoadingOverlay()
             })
             .catch(error => {
-                console.error('JSON 파일 로드 중 오류 발생:', error);
+                console.error('JSON Loading Error:', error);
                 callback({})
                 hideLoadingOverlay()
             });

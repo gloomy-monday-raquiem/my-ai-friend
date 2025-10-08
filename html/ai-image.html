@@ -293,34 +293,33 @@
 <div class="robot robot4"></div>
 <div class="container">
 
-  <button id="back-button" class="back-btn">뒤로</button>
+  <button id="back-button" class="back-btn">Back</button>
 
   <div class="left-section">
-    <h1 style="margin-top: 15px; margin-bottom: 15px;">내 인공지능은 어떤 모습일까?</h1>
+    <h1 style="margin-top: 15px; margin-bottom: 15px;">How would you like your AI to be?</h1>
     <div class="long-buttons">
-      <button id="preset1" class="keyword-button long-button" value="preset1">AI 로보트 만화 캐릭터 느낌이 나는 얼굴
+      <button id="preset1" class="keyword-button long-button" value="preset1">Cyberpunk style cyborg
       </button>
-      <button id="preset2" class="keyword-button long-button" value="preset2">게임 속 캐릭터 느낌이 나는
-        얼굴
+      <button id="preset2" class="keyword-button long-button" value="preset2">Real life style ex-CEO advisor
       </button>
-      <button id="preset3" class="keyword-button long-button" value="preset3">귀여운 만화 느낌이 나는 얼굴</button>
+      <button id="preset3" class="keyword-button long-button" value="preset3">Cartoon style animal</button>
     </div>
     <div class="buttons">
-      <button id="cute" class="keyword-button" value="cute">귀여운</button>
-      <button id="pretty" class="keyword-button" value="pretty">예쁜</button>
-      <button id="awesome" class="keyword-button" value="awesome">멋있는</button>
-      <button id="puppy" class="keyword-button" value="puppy">강아지</button>
-      <button id="kitten" class="keyword-button" value="kitten">고양이</button>
-      <button id="rabbit" class="keyword-button" value="rabbit">토끼</button>
-      <button id="minecraft" class="keyword-button" value="minecraft">마인크래프트</button>
+      <button id="sharp" class="keyword-button" value="sharp">Sharp</button>
+      <button id="charismatic" class="keyword-button" value="charismatic">Charismatic</button>
+      <button id="awesome" class="keyword-button" value="awesome">Awesome</button>
+      <button id="cyberpunk" class="keyword-button" value="cyberpunk">Cyberpunk</button>
+      <button id="real-life" class="keyword-button" value="real-life">Real-life</button>
+      <button id="cartoon" class="keyword-button" value="cartoon">Cartoon</button>
+      <!-- <button id="minecraft" class="keyword-button" value="minecraft">마인크래프트</button>
       <button id="roblox" class="keyword-button" value="roblox">로블록스</button>
-      <button id="sanrio" class="keyword-button" value="sanrio">산리오</button>
+      <button id="sanrio" class="keyword-button" value="sanrio">산리오</button> -->
     </div>
-    <textarea id="prompt-input" class="text-input" placeholder="AI robot character face for cute cat"
+    <textarea id="prompt-input" class="text-input" placeholder="Enter by yourself or use the combination from above options"
               rows="4"></textarea>
     <div class="buttons-section">
-      <button id="generate-button" class="image-btn">생성</button>
-      <button id="submit-button" class="confirm-btn">다음</button>
+      <button id="generate-button" class="image-btn">Create</button>
+      <button id="submit-button" class="confirm-btn">Next</button>
     </div>
   </div>
   <div class="right-section">
@@ -367,7 +366,7 @@
                 hideLoadingOverlay()
             })
             .catch(error => {
-                console.error('JSON 파일 로드 중 오류 발생:', error);
+                console.error('JSON Loading Error:', error);
                 callback({})
                 hideLoadingOverlay()
             });
@@ -402,18 +401,18 @@
         const buttons = document.querySelectorAll('.keyword-button');
 
         let checkedList = {
-            "preset1": [false, "AI robot animation character face of"],
-            "preset2": [false, "A stylized fantasy 3D game character face of"],
-            "preset3": [false, "A cute cartoon face of"],
-            "cute": [false, "cute"],
-            "pretty": [false, "pretty"],
+            "preset1": [false, "Cyberpunk style cyborg"],
+            "preset2": [false, "Real life style ex-CEO advisor"],
+            "preset3": [false, "Cartoon style animal"],
+            "sharp": [false, "sharp"],
+            "charismatic": [false, "charismatic"],
             "awesome": [false, "awesome"],
-            "puppy": [false, "puppy"],
-            "kitten": [false, "kitten"],
-            "rabbit": [false, "rabbit"],
-            "minecraft": [false, "minecraft character"],
-            "roblox": [false, "roblox character"],
-            "sanrio": [false, "sanrio character!"],
+            "cyberpunk": [false, "cyberpunk"],
+            "real-life": [false, "real-life"],
+            "cartoon": [false, "cartoon"],
+            // "minecraft": [false, "minecraft character"],
+            // "roblox": [false, "roblox character"],
+            // "sanrio": [false, "sanrio character!"],
         }
 
         buttons.forEach(function (button) {

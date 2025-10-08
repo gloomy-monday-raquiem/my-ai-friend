@@ -6,7 +6,7 @@
     <html lang="ko">
     <head>
     <meta charset="UTF-8">
-    <title>나에 대한 정보</title>
+    <title>User Info</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -229,17 +229,17 @@
 <div class="robot robot3"></div>
 <div class="robot robot4"></div>
 <div class="input-container">
-  <button id="back-button" class="back-btn">뒤로</button>
-  <h1 class="title-top">인공지능 친구에게</h1>
-  <h1 class="title-bottom">너에 대해서 알려줄래?!</h1>
-  <input id="name-input" type="text" placeholder="이름이 뭐야?" required>
-  <input id="age-input" type="text" placeholder="몇 살이야?">
-  <input id="hobby-input" type="text" placeholder="취미가 뭐야?">
-  <input id="like-input" type="text" placeholder="좋아하는 것이 무엇이니?">
-  <textarea id="etc-input" placeholder="더 알려주고 싶은 이야기가 있으면 여기 적어줘!"></textarea>
+  <button id="back-button" class="back-btn">Back</button>
+  <h1 class="title-top">What information about you</h1>
+  <h1 class="title-bottom">should your assistant know?</h1>
+  <input id="name-input" type="text" placeholder="Enter your name?" required>
+  <input id="age-input" type="text" placeholder="How old are you?">
+  <input id="hobby-input" type="text" placeholder="What is your hobby?">
+  <input id="like-input" type="text" placeholder="What is your area of interest?">
+  <textarea id="etc-input" placeholder="If there is anything more you want to let your Assistant to know, please write here"></textarea>
   <div class="buttons-section">
-    <button id="save-button" class="save-button" onclick="">저장</button>
-    <button id="submit-button" class="submit-button">다음</button>
+    <button id="save-button" class="save-button" onclick="">Save</button>
+    <button id="submit-button" class="submit-button">Next</button>
   </div>
 </div>
 
@@ -280,7 +280,7 @@
                 hideLoadingOverlay()
             })
             .catch(error => {
-                console.error('JSON 파일 로드 중 오류 발생:', error);
+                console.error('JSON Loading Error:', error);
                 callback({})
                 hideLoadingOverlay()
             });
