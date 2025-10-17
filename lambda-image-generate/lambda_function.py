@@ -6,13 +6,15 @@ import base64
 import boto3
 from PIL import Image
 from botocore.exceptions import ClientError
-import random
 
 # S3 클라이언트 생성
 s3 = boto3.client('s3')
 
 # Image 생성을 위한 Model Id 선언
 image_model_id = os.environ.get('imageModelId')
+
+# Bedrock 클라이언트 생성
+bedrock = boto3.client('bedrock-runtime')
 
 # Bucket 이름 선언
 bucket_name = os.environ.get('assetsBucketName')
@@ -31,50 +33,42 @@ def save_image(image, path):
     img1.save(path)
 
 
-def invoke_stable_diffusion(prompt, seed, style_preset=None):
-    """
-    Invokes the Stability.ai Stable Diffusion XL model to create an image using
-    the input provided in the request body.
-
-    :param prompt: The prompt that you want Stable Diffusion  to use for image generation.
-    :param seed: Random noise seed (omit this option or use 0 for a random seed)
-    :param style_preset: Pass in a style preset to guide the image model towards
-                         a particular style.
-    :return: Base64-encoded inference response from the model.
-    """
+def invoke_titan_image(prompt, seed):
+    """Titan Image Generator G1 모델 호출"""
 
     try:
-        # The different model providers have individual request and response formats.
-        # For the format, ranges, and available style_presets of Stable Diffusion models refer to:
-        # https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-stability-diffusion.html
-
-        selected_region = os.environ['AWS_REGION']
-        boto3_bedrock = boto3.client(
-            'bedrock-runtime',
-            region_name=selected_region
-        )
-
         body = {
-            "text_prompts": [{"text": prompt}],
-            "seed": seed,
-            "cfg_scale": 8,
-            "steps": 50,
+            "taskType": "TEXT_IMAGE",
+            "textToImageParams": {
+                "text": prompt
+            },
+            "imageGenerationConfig": {
+                "numberOfImages": 1,
+                "quality": "standard",
+                "cfgScale": 8,
+                "height": 1024,
+                "width": 1024,
+                "seed": seed,
+            }
         }
 
-        if style_preset:
-            body["style_preset"] = style_preset
-
-        response = boto3_bedrock.invoke_model(
-            modelId=image_model_id, body=json.dumps(body)
+        response = bedrock.invoke_model(
+            modelId=image_model_id,
+            body=json.dumps(body)
         )
 
         response_body = json.loads(response["body"].read())
-        base64_image_data = response_body["artifacts"][0]["base64"]
+        images = response_body.get("images", [])
+
+        if not images:
+            raise ValueError("Titan Image Generator 응답에 이미지가 없습니다.")
+
+        base64_image_data = images[0]
 
         return base64_image_data
 
-    except ClientError:
-        print("Couldn't invoke Stable Diffusion XL")
+    except ClientError as error:
+        print("Couldn't invoke Titan Image Generator", error)
         raise
 
 
@@ -82,7 +76,7 @@ def lambda_handler(event, context):
     id = event["queryStringParameters"]['id']
     prompt = event["queryStringParameters"]['prompt']
 
-    img_b64 = invoke_stable_diffusion(prompt, 0)
+    img_b64 = invoke_titan_image(prompt, 0)
 
     # 파일이름
     filename = f'{id}_image.png'

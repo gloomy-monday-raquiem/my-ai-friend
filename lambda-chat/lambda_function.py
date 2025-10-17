@@ -11,6 +11,19 @@ s3 = boto3.client('s3')
 # 모델 Id 선언
 model_id = os.environ.get('modelId')
 
+# Bedrock LLM 생성
+llm = ChatBedrock(
+    client=boto3.client('bedrock-runtime'),
+    model_id=model_id,
+    streaming=False,
+    model_kwargs={
+        "max_tokens": 512,
+        "temperature": 1,
+        "top_p": 0.9,
+        "stop_sequences": ["\n\nHuman"],
+    }
+)
+
 # Bucket 이름 선언
 bucket_name = os.environ.get('assetsBucketName')
 
@@ -104,18 +117,6 @@ Current conversation:
 
 
 def invoke_llm(prompt):
-    llm = ChatBedrock(
-        model_id=model_id,
-        streaming=False,
-        model_kwargs={
-            "max_tokens": 512,
-            "temperature": 1,
-            "top_k": 250,
-            "top_p": 1,
-            "stop_sequences": ["\n\nHuman"],
-        }
-    )
-
     messages = [
         HumanMessage(
             content=prompt
