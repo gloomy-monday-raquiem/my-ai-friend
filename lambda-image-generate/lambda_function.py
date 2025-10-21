@@ -31,7 +31,7 @@ def save_image(image, path):
     img1.save(path)
 
 
-def invoke_stable_diffusion(prompt, seed, style_preset=None):
+def invoke_titan(prompt, seed, style_preset=None):
     """
     Invokes the Amazon tita-image-generator model to create an image using
     the input provided in the request body.
@@ -48,7 +48,7 @@ def invoke_stable_diffusion(prompt, seed, style_preset=None):
         # For the format, ranges, and available style_presets of Stable Diffusion models refer to:
         # https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-stability-diffusion.html
 
-        selected_region = os.environ['us-east-1']
+        selected_region = 'us-east-1'
         boto3_bedrock = boto3.client(
             'bedrock-runtime',
             region_name=selected_region
@@ -82,7 +82,7 @@ def lambda_handler(event, context):
     id = event["queryStringParameters"]['id']
     prompt = event["queryStringParameters"]['prompt']
 
-    img_b64 = invoke_stable_diffusion(prompt, 0)
+    img_b64 = invoke_titan(prompt, 0)
 
     # 파일이름
     filename = f'{id}_image.png'
