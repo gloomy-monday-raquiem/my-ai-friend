@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 s3 = boto3.client('s3')
 
 # Bucket 이름 선언
-bucket_name = os.environ.get('assetsBucketName')
+bucket_name = "aiassistant-bucket-0088"
 
 def update_if_exist(event, key, data):
     if 'queryStringParameters' in event:
@@ -18,12 +18,12 @@ def update_if_exist(event, key, data):
             value = query_params[key]
             # 내용이 있는지 확인
             if value.strip() != "":
-                print(f"{key} 에 대한 값: {value}")
+                print(f"{key}: {value}")
                 data[key] = value.strip()
         else:
-            print(f"{key} 가 없습니다.")
+            print(f"{key} Not Found")
     else:
-        print("queryStringParameters가 없습니다.")
+        print("queryStringParameters Not Found.")
     return data
 
 
@@ -38,7 +38,7 @@ def lambda_handler(event, context):
     try:
         # head_object 메서드를 사용하여 파일 존재 여부 확인
         s3.head_object(Bucket=bucket_name, Key=file_key)
-        print(f"{file_key} 파일이 {bucket_name} 버킷에 존재합니다.")
+        print(f"{file_key} file exists in {bucket_name}.")
 
         # S3에서 JSON 파일 읽기
         response = s3.get_object(Bucket=bucket_name, Key=file_key)
@@ -47,10 +47,10 @@ def lambda_handler(event, context):
     except s3.exceptions.ClientError as e:
         # 404 에러가 발생하면 파일이 없는 것
         if e.response['Error']['Code'] == '404':
-            print(f"{file_key} 파일이 {bucket_name} 버킷에 없습니다.")
+            print(f"{file_key} file not in {bucket_name}.")
         else:
             # 다른 에러가 발생한 경우 예외 처리
-            print(f"에러 발생: {e}")
+            print(f"Error: {e}")
 
     updated_json_data = {}
     try:
@@ -69,12 +69,12 @@ def lambda_handler(event, context):
 
         # S3에 업데이트된 JSON 파일 업로드
         s3.put_object(Body=updated_json_data, Bucket=bucket_name, Key=file_key)
-        print(f"JSON 파일이 {file_key} 경로에 성공적으로 업데이트되었습니다.")
+        print(f"JSON File {file_key} successfully updated.")
 
     except ClientError as e:
-        print(f"S3 작업 중 에러가 발생했습니다: {e.response['Error']['Message']}")
+        print(f"S3 Error occurred: {e.response['Error']['Message']}")
     except Exception as e:
-        print(f"예기치 않은 에러가 발생했습니다: {str(e)}")
+        print(f"Unexpected Error: {str(e)}")
 
     return {
         'statusCode': 200,

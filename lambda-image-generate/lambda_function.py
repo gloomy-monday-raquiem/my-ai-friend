@@ -12,10 +12,10 @@ import random
 s3 = boto3.client('s3')
 
 # Image 생성을 위한 Model Id 선언
-image_model_id = os.environ.get('imageModelId')
+image_model_id = "amazon.titan-image-generator-v2:0"
 
 # Bucket 이름 선언
-bucket_name = os.environ.get('assetsBucketName')
+bucket_name = "aiassistant-bucket-0088"
 
 
 def save_image(image, path):
@@ -33,7 +33,7 @@ def save_image(image, path):
 
 def invoke_stable_diffusion(prompt, seed, style_preset=None):
     """
-    Invokes the Stability.ai Stable Diffusion XL model to create an image using
+    Invokes the Amazon tita-image-generator model to create an image using
     the input provided in the request body.
 
     :param prompt: The prompt that you want Stable Diffusion  to use for image generation.
@@ -48,7 +48,7 @@ def invoke_stable_diffusion(prompt, seed, style_preset=None):
         # For the format, ranges, and available style_presets of Stable Diffusion models refer to:
         # https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-stability-diffusion.html
 
-        selected_region = os.environ['AWS_REGION']
+        selected_region = os.environ['us-east-1']
         boto3_bedrock = boto3.client(
             'bedrock-runtime',
             region_name=selected_region
@@ -74,7 +74,7 @@ def invoke_stable_diffusion(prompt, seed, style_preset=None):
         return base64_image_data
 
     except ClientError:
-        print("Couldn't invoke Stable Diffusion XL")
+        print("Couldn't invoke Titan image generator")
         raise
 
 
@@ -110,7 +110,7 @@ def lambda_handler(event, context):
 
         # head_object 메서드를 사용하여 파일 존재 여부 확인
         s3.head_object(Bucket=bucket_name, Key=file_key)
-        print(f"{file_key} 파일이 {bucket_name} 버킷에 존재합니다.")
+        print(f"{file_key} file exists in {bucket_name}.")
 
         # S3에서 JSON 파일 읽기
         response = s3.get_object(Bucket=bucket_name, Key=file_key)
@@ -119,10 +119,10 @@ def lambda_handler(event, context):
     except s3.exceptions.ClientError as e:
         # 404 에러가 발생하면 파일이 없는 것
         if e.response['Error']['Code'] == '404':
-            print(f"{file_key} 파일이 {bucket_name} 버킷에 없습니다.")
+            print(f"{file_key} file not in {bucket_name}.")
         else:
             # 다른 에러가 발생한 경우 예외 처리
-            print(f"에러 발생: {e}")
+            print(f"Error: {e}")
 
     # 이미지 주소, Prompt 저장
     json_data['ai-prompt'] = prompt
