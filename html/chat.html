@@ -415,7 +415,7 @@
 
     function getSummary(id, callback) {
         // showLoadingOverlay()
-        fetch('/default/api/lambda-summary?id=' + id)
+        fetch('https://po3l88nhr4.execute-api.us-east-1.amazonaws.com/api/lambda-summary?id=' + id)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -546,7 +546,7 @@
         // 메시지 전송 함수
         function deleteMessage() {
             let loadingMessage = addLoadingMessage()
-            const infoUrl = "/default/api/lambda-chat?"
+            const infoUrl = "https://08dlq7y9u7.execute-api.us-east-1.amazonaws.com/default/api/lambda-chat?"
                 + "id=" + id + "&"
                 + "query=" + "DELETE MESSAGE"
             fetch(infoUrl)
@@ -589,7 +589,7 @@
             // chatInput.disabled = true;
             // sendButton.disabled = true;
 
-            const infoUrl = "/default/api/lambda-chat?"
+            const infoUrl = "https://08dlq7y9u7.execute-api.us-east-1.amazonaws.com/default/api/lambda-chat?"
                 + "id=" + id + "&"
                 + "query=" + message
             fetch(infoUrl)

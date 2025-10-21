@@ -12,7 +12,7 @@ s3 = boto3.client('s3')
 model_id = 'amazon.nova-lite-v1:0'
 
 # Bucket 이름 선언
-bucket_name = "my-ai-assistant-bucket"
+bucket_name = "aiassistant-bucket-0088"
 
 
 def get_info(file_key):
@@ -146,20 +146,20 @@ def lambda_handler(event, context):
     id = event["queryStringParameters"]['id']
     query = event["queryStringParameters"]['query']
 
-    # if query.strip() == 'DELETE HISTORY':
-    #     file_key = f'info/{id}_history.txt'
-    #     s3.put_object(Body="", Bucket=bucket_name, Key=file_key)
-    #     return {
-    #         'statusCode': 200,
-    #         'headers': {
-    #             "Content-Type": "application/json; charset=UTF-8",
-    #             "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,X-Amz-Security-Token,Authorization,X-Api-Key,X-Requested-With,Accept,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Headers",
-    #             "Access-Control-Allow-Origin": "*",
-    #             "Access-Control-Allow-Methods": "*",
-    #             "X-Requested-With": "*"
-    #         },
-    #         'body': 'DELETE'
-    #     }
+    if query.strip() == 'DELETE HISTORY':
+        file_key = f'info/{id}_history.txt'
+        s3.put_object(Body="", Bucket=bucket_name, Key=file_key)
+        return {
+            'statusCode': 200,
+            'headers': {
+                "Content-Type": "application/json; charset=UTF-8",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,X-Amz-Security-Token,Authorization,X-Api-Key,X-Requested-With,Accept,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Headers",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "X-Requested-With": "*"
+            },
+            'body': 'DELETE'
+        }
 
     # Read info file
     info = get_info(f'info/{id}_info.json')
