@@ -310,7 +310,8 @@
 </div>
 </body>
 <script>
-
+    const API_BASE_URL = 'https://x8wkcc5lrd.execute-api.us-east-1.amazonaws.com/test';
+    const BUCKET_URL = 'https://aiassistant-bucket-0088.s3.amazonaws.com';
     // 로딩창 띄우기
     const loadingOverlay = document.getElementById('loading-overlay');
 
@@ -331,21 +332,25 @@
     }
 
     function getInfo(id, callback) {
-        showLoadingOverlay()
-        fetch('/default/info/' + id + '_info.json')
-            .then(response => response.json())
+        showLoadingOverlay();
+        
+        fetch(`${BUCKET_URL}/info/${id}_info.json`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Info file not found');
+                }
+                return response.json();
+            })
             .then(data => {
-                // 여기서 data는 파싱된 JSON 데이터입니다.
                 console.log(data);
-                callback(data)
-                hideLoadingOverlay()
+                callback(data);
+                hideLoadingOverlay();
             })
             .catch(error => {
                 console.error('JSON Loading Error:', error);
-                callback({})
-                hideLoadingOverlay()
+                callback({});
+                hideLoadingOverlay();
             });
-        return {}
     }
 
     window.onload = function () {
@@ -406,15 +411,18 @@
             }
 
             showLoadingOverlay()
-            const infoUrl = "https://haozno1jdf.execute-api.us-east-1.amazonaws.com/api/lambda-info-update?"
-                + "id=" + id + "&"
-                + "ai-name=" + aiNameInput.value.trim() + "&"
-                + "ai-character=" + aiCharacterInput.value.trim() + "&"
-                + "my-name=&"
-                + "my-age=&"
-                + "my-hobby=&"
-                + "my-like=&"
-                + "my-etc="
+            const params = new URLSearchParams({
+            'id': id,
+            'ai-name': aiNameInput.value.trim(),
+            'ai-character': aiCharacterInput.value.trim(),
+            'my-name': '',
+            'my-age': '',
+            'my-hobby': '',
+            'my-like': '',
+            'my-etc': ''
+            });
+
+            const infoUrl = `${API_BASE_URL}/info-update?${params.toString()}`;
             fetch(infoUrl)
                 .then(response => {
                     return response.json()

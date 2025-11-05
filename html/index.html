@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Build your AI Assistant</title>
+  <title>Build your AI Assistant V2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -315,7 +315,7 @@
 
 <div class="container">
   <h1 class="title-top">Make your own</h1>
-  <h1 class="title-bottom">AI Asistant</h1>
+  <h1 class="title-bottom">AI Assistant</h1>
   <input id="input-id" type="text" placeholder="Enter your preferred ID"><br>
   <button id="submit-button">Create your own AI assistant</button>
 </div>
@@ -350,7 +350,7 @@
             inputElement.style.border = '2px solid red';
         } else {
             inputElement.style.border = ''; // 입력값이 있으면 테두리 스타일 초기화
-            window.location.href = 'ai-image.html?id=' + inputValue;
+            window.location.href = 'ai-image.html?id=' + encodeURIComponent(inputValue);
         }
     });
 

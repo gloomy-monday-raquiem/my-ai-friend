@@ -248,7 +248,8 @@
 </div>
 </body>
 <script>
-
+    const API_BASE_URL = 'https://x8wkcc5lrd.execute-api.us-east-1.amazonaws.com/test';
+    const BUCKET_URL = 'https://aiassistant-bucket-0088.s3.amazonaws.com';
     const loadingOverlay = document.getElementById('loading-overlay');
 
     // 로딩창 띄우기
@@ -270,21 +271,25 @@
     }
 
     function getInfo(id, callback) {
-        showLoadingOverlay()
-        fetch('/default/info/' + id + '_info.json')
-            .then(response => response.json())
+        showLoadingOverlay();
+        
+        fetch(`${BUCKET_URL}/info/${id}_info.json`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Info file not found');
+                }
+                return response.json();
+            })
             .then(data => {
-                // 여기서 data는 파싱된 JSON 데이터입니다.
                 console.log(data);
-                callback(data)
-                hideLoadingOverlay()
+                callback(data);
+                hideLoadingOverlay();
             })
             .catch(error => {
                 console.error('JSON Loading Error:', error);
-                callback({})
-                hideLoadingOverlay()
+                callback({});
+                hideLoadingOverlay();
             });
-        return {}
     }
 
     window.onload = function () {
@@ -371,29 +376,37 @@
             }
 
             showLoadingOverlay()
-            const infoUrl = "/default/api/lambda-info-update?"
-                + "id=" + id + "&"
-                + "ai-name=&"
-                + "ai-character=&"
-                + "my-name=" + nameInput.value.trim() + "&"
-                + "my-age=" + ageInput.value.trim() + "&"
-                + "my-hobby=" + hobbyInput.value.trim() + "&"
-                + "my-like=" + likeInput.value.trim() + "&"
-                + "my-etc=" + etcInput.value.trim() + "&"
-            fetch(infoUrl)
-                .then(response => {
-                    return response.json()
-                })
-                .then(data => {
-                    console.log(data);
-                    hideLoadingOverlay()
-                    callback(data)
-                })
-                .catch(error => {
-                    hideLoadingOverlay()
-                    console.error('Error:', error);
-                    callback(error)
-                });
+            const params = new URLSearchParams({
+            'id': id,
+            'ai-name': '',
+            'ai-character': '',
+            'my-name': nameInput.value.trim(),
+            'my-age': ageInput.value.trim(),
+            'my-hobby': hobbyInput.value.trim(),
+            'my-like': likeInput.value.trim(),
+            'my-etc': etcInput.value.trim()
+        });
+
+        const infoUrl = `${API_BASE_URL}/info-update?${params.toString()}`;
+
+        fetch(infoUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                hideLoadingOverlay();
+                callback(data);
+            })
+            .catch(error => {
+                hideLoadingOverlay();
+                console.error('Error:', error);
+                alert('Failed to save information. Please try again.');
+                callback({ error: error.message });
+            });
         }
 
         const submitButton = document.getElementById('submit-button');

@@ -335,7 +335,8 @@
 
 </body>
 <script>
-
+    const API_BASE_URL = 'https://x8wkcc5lrd.execute-api.us-east-1.amazonaws.com/test';
+    const BUCKET_URL = 'https://aiassistant-bucket-0088.s3.amazonaws.com';
     // 로딩창 띄우기
     const loadingOverlay = document.getElementById('loading-overlay');
 
@@ -356,27 +357,35 @@
     }
 
     function getInfo(id, callback) {
-        showLoadingOverlay()
-        fetch('/default/info/' + id + '_info.json')
-            .then(response => response.json())
+        showLoadingOverlay();
+        
+        fetch(`${BUCKET_URL}/info/${id}_info.json`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Info file not found');
+                }
+                return response.json();
+            })
             .then(data => {
-                // 여기서 data는 파싱된 JSON 데이터입니다.
                 console.log(data);
-                callback(data)
-                hideLoadingOverlay()
+                callback(data);
+                hideLoadingOverlay();
             })
             .catch(error => {
                 console.error('JSON Loading Error:', error);
-                callback({})
-                hideLoadingOverlay()
+                callback({});
+                hideLoadingOverlay();
             });
-        return {}
     }
 
     window.onload = function () {
 
         let id = getId()
-
+        if (!id) {
+            alert('ID not found. Redirecting to main page.');
+            window.location.href = 'index.html';
+            return;
+        }
         // Update exist data
         const imageElement = document.getElementById('generated-image');
         getInfo(id, function (info) {
@@ -464,9 +473,15 @@
             const inputElement = document.getElementById('prompt-input');
             const inputValue = inputElement.value.trim();
 
+            if (!inputValue) {
+                alert('Please enter a prompt');
+                generateButton.disabled = false;
+                return;
+            }
+
             console.log("Start Generate Image")
-            imageElement.src = "/default/data/loading1.gif"
-            const imageUrl = "https://rggdjk0a5b.execute-api.us-east-1.amazonaws.com/api/lambda-image-generate?id="+id+"&prompt="+inputValue;
+            imageElement.src = "/data/loading1.gif"
+            const imageUrl = `${API_BASE_URL}/image-generate?id=${encodeURIComponent(id)}&prompt=${encodeURIComponent(inputValue)}`;
             fetch(imageUrl)
                 .then(response => {
                     return response.json()
@@ -481,7 +496,7 @@
                 .catch(error => {
                     generateButton.disabled = false
 
-                    imageElement.src = "/default/data/icon4.png"
+                    // imageElement.src = "/default/data/icon4.png"
                     console.error('Error:', error);
                 });
         });

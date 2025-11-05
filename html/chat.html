@@ -351,15 +351,14 @@
 <div class="container">
   <button id="back-button" class="back-btn"> Back</button>
   <div class="left-section">
-    <h1 class="title-top">Welcome! Let start the conversation</h1>
+    <h1 class="title-top">Welcome! Let start the conversation V2</h1>
     <div class="image-placeholder"><img id="generated-image"
                                         style="max-width: 100%; height: auto;"
                                         alt=""></div>
     <div id="ai-info" class="ai-info">
       <button id="go-ai-image-button" class="image-btn" style="width: 100%; margin-bottom: 10px">Regenerate your AI assistant</button>
       <button id="go-ai-info-button" class="image-btn" style="width: 100%; margin-bottom: 10px">Change assistant's name and persona</button>
-      <button id="go-my-info-button" class="image-btn" style="width: 100%; margin-bottom: 10px"
-      ">Change my information</button>
+      <button id="go-my-info-button" class="image-btn" style="width: 100%; margin-bottom: 10px">Change my information</button>
       <button id="go-index-button" class="image-btn" style="width: 100%">Start from the beginning</button>
 
     </div>
@@ -385,7 +384,8 @@
 </body>
 
 <script>
-
+    const API_BASE_URL = 'https://x8wkcc5lrd.execute-api.us-east-1.amazonaws.com/test';
+    const BUCKET_URL = 'https://aiassistant-bucket-0088.s3.amazonaws.com';
     function getId() {
         // URL에서 쿼리스트링 부분만 가져오기
         let queryString = window.location.search;
@@ -394,40 +394,43 @@
     }
 
     function getInfo(id, callback) {
-        fetch('/default/info/' + id + '_info.json')
+        fetch(`${BUCKET_URL}/info/${id}_info.json`)
             .then(response => {
-                console.log(response)
-                return response.json()
+                console.log(response);
+                if (!response.ok) {
+                    throw new Error('Info file not found');
+                }
+                return response.json();
             })
             .then(data => {
-                // 여기서 data는 파싱된 JSON 데이터입니다.
                 console.log(data);
-                callback(data)
-                // hideLoadingOverlay()
+                callback(data);
             })
             .catch(error => {
                 console.error('JSON Loading Error:', error);
-                callback({})
-                // hideLoadingOverlay()
+                callback({});
             });
-        return {}
     }
 
+
     function getSummary(id, callback) {
-        // showLoadingOverlay()
-        fetch('https://po3l88nhr4.execute-api.us-east-1.amazonaws.com/api/lambda-summary?id=' + id)
-            .then(response => response.json())
+        const summaryUrl = `${API_BASE_URL}/summary?id=${encodeURIComponent(id)}`;
+        
+        fetch(summaryUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log(data);
-                callback(data)
-                // hideLoadingOverlay()
+                callback(data);
             })
             .catch(error => {
-                console.error('JSON Loading Error:', error);
-                callback(error)
-                // hideLoadingOverlay()
+                console.error('Summary Error:', error);
+                callback({ error: error.message });
             });
-        return {}
     }
 
     // 로딩창 띄우기
@@ -492,10 +495,10 @@
                         const botMessage = document.createElement('div');
                         botMessage.classList.add('chat-message');
                         botMessage.innerHTML = `
-              <div class="chat-bubble bot-bubble">
-                <p>${aiInfo}</p>
-              </div>
-            `;
+                            <div class="chat-bubble bot-bubble">
+                                <p>${aiInfo}</p>
+                            </div>
+                        `;
                         chatBody.appendChild(botMessage);
                     }
                     hideLoadingOverlay()
@@ -545,25 +548,35 @@
 
         // 메시지 전송 함수
         function deleteMessage() {
-            let loadingMessage = addLoadingMessage()
-            const infoUrl = "https://08dlq7y9u7.execute-api.us-east-1.amazonaws.com/default/api/lambda-chat?"
-                + "id=" + id + "&"
-                + "query=" + "DELETE MESSAGE"
-            fetch(infoUrl)
+            if (!confirm('Are you sure you want to delete chat history?')) {
+                return;
+            }
+
+            const loadingMessage = addLoadingMessage();
+
+            const deleteUrl = `${API_BASE_URL}/chat?id=${encodeURIComponent(id)}&query=${encodeURIComponent('DELETE HISTORY')}`;
+
+            fetch(deleteUrl)
                 .then(response => {
-                    return response.json()
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
                 })
                 .then(data => {
+                    console.log('History deleted:', data);
                     chatBody.removeChild(loadingMessage);
-                    chatBody.innerHTML = ""
+                    chatBody.innerHTML = "";
                     chatInput.disabled = false;
                     sendButton.disabled = false;
+                    alert('Chat history deleted successfully!');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Delete Error:', error);
                     chatBody.removeChild(loadingMessage);
                     chatInput.disabled = false;
                     sendButton.disabled = false;
+                    alert('Failed to delete chat history. Please try again.');
                 });
         }
 
@@ -576,10 +589,10 @@
             const userMessage = document.createElement('div');
             userMessage.classList.add('chat-message');
             userMessage.innerHTML = `
-    <div class="chat-bubble user-bubble">
-      <p>${message}</p>
-    </div>
-  `;
+                <div class="chat-bubble user-bubble">
+                <p>${message}</p>
+                </div>
+            `;
             chatBody.appendChild(userMessage);
 
             // Loading 창 입력
@@ -589,36 +602,52 @@
             // chatInput.disabled = true;
             // sendButton.disabled = true;
 
-            const infoUrl = "https://08dlq7y9u7.execute-api.us-east-1.amazonaws.com/default/api/lambda-chat?"
-                + "id=" + id + "&"
-                + "query=" + message
-            fetch(infoUrl)
+            const chatUrl = `${API_BASE_URL}/chat?id=${encodeURIComponent(id)}&query=${encodeURIComponent(message)}`;
+
+            fetch(chatUrl)
                 .then(response => {
-                    return response.json()
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
                 })
                 .then(data => {
                     console.log(data);
-                    let answer = data['answer'] ? data['answer'] : '';
-                    // 봇 메시지 추가 (예시로 "안녕하세요! 무엇을 도와드릴까요?"를 사용)
+                    const answer = data['answer'] || 'Sorry, I could not generate a response.';
+
+                    // 봇 메시지 추가
                     const botMessage = document.createElement('div');
                     botMessage.classList.add('chat-message');
                     botMessage.innerHTML = `
-              <div class="chat-bubble bot-bubble">
-                <p>${answer}</p>
-              </div>
-            `;
+                        <div class="chat-bubble bot-bubble">
+                            <p>${escapeHtml(answer)}</p>
+                        </div>
+                    `;
                     chatBody.appendChild(botMessage);
                     chatBody.removeChild(loadingMessage);
+
+                    // 입력창 활성화
                     chatInput.disabled = false;
                     sendButton.disabled = false;
+                    chatInput.focus();
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Chat Error:', error);
+                    
+                    // 에러 메시지 표시
+                    const errorMessage = document.createElement('div');
+                    errorMessage.classList.add('chat-message');
+                    errorMessage.innerHTML = `
+                        <div class="chat-bubble bot-bubble" style="background-color: #ffebee;">
+                            <p style="color: #c62828;">Failed to send message. Please try again.</p>
+                        </div>
+                    `;
+                    chatBody.appendChild(errorMessage);
                     chatBody.removeChild(loadingMessage);
+
                     chatInput.disabled = false;
                     sendButton.disabled = false;
                 });
-
 
             // 입력 필드 초기화
             chatInput.value = '';
