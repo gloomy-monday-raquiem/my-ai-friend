@@ -401,7 +401,7 @@
 
             if (aiImage !== '') {
                 const randomHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-                imageElement.src = aiImage + "?hash=" + randomHash
+                imageElement.src = `${BUCKET_URL}/${aiImage}?hash=${randomHash}`;
             }
             const inputElement = document.getElementById('prompt-input');
             inputElement.value = aiPrompt
@@ -491,7 +491,7 @@
                     generateButton.disabled = false
 
                     const randomHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-                    imageElement.src = data['url'] + "?hash=" + randomHash;
+                    imageElement.src = `${BUCKET_URL}/${data['url']}?hash=${randomHash}`;
                 })
                 .catch(error => {
                     generateButton.disabled = false

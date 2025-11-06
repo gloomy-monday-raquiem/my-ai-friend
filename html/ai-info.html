@@ -358,35 +358,29 @@
 
         // Update exist data
         getInfo(id, function (info) {
-            let aiImage = info['ai-image'] ? info['ai-image'] : '';
-            let aiPrompt = info['ai-prompt'] ? info['ai-prompt'] : '';
-            let aiName = info['ai-name'] ? info['ai-name'] : '';
-            let aiCharacter = info['ai-character'] ? info['ai-character'] : '';
-            let myName = info['my-name'] ? info['my-name'] : '';
-            let myAge = info['my-age'] ? info['my-age'] : '';
-            let myHobby = info['my-hobby'] ? info['my-hobby'] : '';
-            let myLike = info['my-like'] ? info['my-like'] : '';
-            let myEtc = info['my-etc'] ? info['my-etc'] : '';
+            const aiName = info['ai-name'] || '';
+            const aiCharacter = info['ai-character'] || '';
 
-            const aiNameInput = document.getElementById('name-input')
-            aiNameInput.value = aiName
+            const aiNameInput = document.getElementById('name-input');
+            aiNameInput.value = aiName;
 
-            const aiCharacterInput = document.getElementById('character-input')
-            aiCharacterInput.value = aiCharacter
+            const aiCharacterInput = document.getElementById('character-input');
+            aiCharacterInput.value = aiCharacter;
+        });
 
-        })
-
+        // 라디오 버튼
         const radioButtons = document.querySelectorAll('.radio');
         radioButtons.forEach(function (button) {
             button.addEventListener('click', function () {
                 const selectedRadio = Array.from(radioButtons).find(radio => radio.checked);
-                const selectedLabel = selectedRadio.nextElementSibling;
-                const selectedLabelText = selectedLabel.textContent.trim();
-                const aiCharacterInput = document.getElementById('character-input')
-                aiCharacterInput.value = selectedLabelText
-
-            })
-        })
+                if (selectedRadio) {
+                    const selectedLabel = selectedRadio.nextElementSibling;
+                    const selectedLabelText = selectedLabel.textContent.trim();
+                    const aiCharacterInput = document.getElementById('character-input');
+                    aiCharacterInput.value = selectedLabelText;
+                }
+            });
+        });
 
         function saveAiInfo(callback) {
 
@@ -441,24 +435,27 @@
 
         const backButton = document.getElementById('back-button');
         backButton.addEventListener('click', function () {
-            window.location.href = 'ai-image.html?id=' + id;
+            window.location.href = `ai-image.html?id=${encodeURIComponent(id)}`;
         });
 
+        // Save 버튼
         const saveButton = document.getElementById('save-button');
         saveButton.addEventListener('click', function () {
-            saveAiInfo(function () {
-
-            })
+            saveAiInfo(function (data) {
+                if (data && !data.error) {
+                    alert('Information saved successfully!');
+                }
+            });
         });
 
+        // Submit 버튼
         const submitButton = document.getElementById('submit-button');
         submitButton.addEventListener('click', function () {
             saveAiInfo(function () {
-              window.location.href = 'my-info.html?id=' + id;
-            })
+                window.location.href = `my-info.html?id=${encodeURIComponent(id)}`;
+            });
         });
-
-    }
+    };
 
 </script>
 </html>

@@ -293,41 +293,34 @@
     }
 
     window.onload = function () {
-        let id = getId()
+        const id = getId();
+
+        // ✅ 수정 4: ID 체크
+        if (!id) {
+            alert('ID not found. Redirecting to main page.');
+            window.location.href = 'index.html';
+            return;
+        }
 
         // Update exist data
         getInfo(id, function (info) {
-            let aiImage = info['ai-image'] ? info['ai-image'] : '';
-            let aiPrompt = info['ai-prompt'] ? info['ai-prompt'] : '';
-            let aiName = info['ai-name'] ? info['ai-name'] : '';
-            let aiCharacter = info['ai-character'] ? info['ai-character'] : '';
-            let myName = info['my-name'] ? info['my-name'] : '';
-            let myAge = info['my-age'] ? info['my-age'] : '';
-            let myHobby = info['my-hobby'] ? info['my-hobby'] : '';
-            let myLike = info['my-like'] ? info['my-like'] : '';
-            let myEtc = info['my-etc'] ? info['my-etc'] : '';
+            const myName = info['my-name'] || '';
+            const myAge = info['my-age'] || '';
+            const myHobby = info['my-hobby'] || '';
+            const myLike = info['my-like'] || '';
+            const myEtc = info['my-etc'] || '';
 
-            const nameInput = document.getElementById('name-input')
-            nameInput.value = myName
-
-            const ageInput = document.getElementById('age-input')
-            ageInput.value = myAge
-
-            const hobbyInput = document.getElementById('hobby-input')
-            hobbyInput.value = myHobby
-
-            const likeInput = document.getElementById('like-input')
-            likeInput.value = myLike
-
-            const etcInput = document.getElementById('etc-input')
-            etcInput.value = myEtc
-
-        })
+            document.getElementById('name-input').value = myName;
+            document.getElementById('age-input').value = myAge;
+            document.getElementById('hobby-input').value = myHobby;
+            document.getElementById('like-input').value = myLike;
+            document.getElementById('etc-input').value = myEtc;
+        });
 
 
         const backButton = document.getElementById('back-button');
         backButton.addEventListener('click', function () {
-            window.location.href = 'ai-info.html?id=' + id;
+            window.location.href = `ai-info.html?id=${encodeURIComponent(id)}`;
         });
 
         function saveMyInfo(callback) {
@@ -412,17 +405,20 @@
         const submitButton = document.getElementById('submit-button');
         submitButton.addEventListener('click', function () {
             saveMyInfo(function () {
-                window.location.href = 'chat.html?id=' + id;
-            })
+                window.location.href = `chat.html?id=${encodeURIComponent(id)}`;
+            });
         });
 
+        // Save 버튼
         const saveButton = document.getElementById('save-button');
         saveButton.addEventListener('click', function () {
-            saveMyInfo(function () {
-
-            })
+            saveMyInfo(function (data) {
+                if (data && !data.error) {
+                    alert('Information saved successfully!');
+                }
+            });
         });
-    }
+    };
 
 </script>
 </html>

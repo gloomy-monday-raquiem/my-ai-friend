@@ -483,7 +483,7 @@
                 const imageElement = document.getElementById('generated-image');
                 if (aiImage !== '') {
                     const randomHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-                    imageElement.src = aiImage + "?hash=" + randomHash
+                    imageElement.src = `${BUCKET_URL}/${aiImage}?hash=${randomHash}`;
                 }
                 getSummary(id, function (data) {
                     let aiInfo = data['answer'] ? data['answer'] : '';
@@ -655,29 +655,28 @@
 
         const goImageButton = document.getElementById('go-ai-image-button');
         goImageButton.addEventListener('click', function () {
-            window.location.href = 'ai-image.html?id=' + id;
+            window.location.href = `ai-image.html?id=${encodeURIComponent(id)}`;
         });
 
         const goAiInfoButton = document.getElementById('go-ai-info-button');
         goAiInfoButton.addEventListener('click', function () {
-            window.location.href = 'ai-info.html?id=' + id;
+            window.location.href = `ai-info.html?id=${encodeURIComponent(id)}`;
         });
 
         const goMyInfoButton = document.getElementById('go-my-info-button');
         goMyInfoButton.addEventListener('click', function () {
-            window.location.href = 'my-info.html?id=' + id;
+            window.location.href = `my-info.html?id=${encodeURIComponent(id)}`;
         });
 
         const goFirstButton = document.getElementById('go-index-button');
         goFirstButton.addEventListener('click', function () {
-            window.location.href = 'index.html?id=' + id;
+            window.location.href = `index.html?id=${encodeURIComponent(id)}`;
         });
 
         const backButton = document.getElementById('back-button');
         backButton.addEventListener('click', function () {
-            window.location.href = 'my-info.html?id=' + id;
+            window.location.href = `my-info.html?id=${encodeURIComponent(id)}`;
         });
-
-    }
+    };
 </script>
 </html>
